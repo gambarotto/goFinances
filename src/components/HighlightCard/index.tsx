@@ -10,15 +10,33 @@ import {
   Title,
 } from './styles';
 
-const HighlightCard: React.FC = () => (
-  <Container>
+interface Props {
+  title: string;
+  amount: string;
+  lastTransiction: string;
+  type: 'up' | 'down' | 'total';
+}
+
+const icon = {
+  up: 'arrow-up-circle',
+  down: 'arrow-down-circle',
+  total: 'dollar-sign',
+};
+
+const HighlightCard: React.FC<Props> = ({
+  title,
+  amount,
+  lastTransiction,
+  type,
+}) => (
+  <Container type={type}>
     <Header>
-      <Title>Entrada</Title>
-      <Icon name="arrow-up-circle" />
+      <Title type={type}>{title}</Title>
+      <Icon name={icon[type]} type={type} />
     </Header>
     <Footer>
-      <Amount>R$ 17.400,00</Amount>
-      <LastTransiction>Última entrada dia 13 de abril</LastTransiction>
+      <Amount type={type}>{amount}</Amount>
+      <LastTransiction type={type}>{lastTransiction}</LastTransiction>
     </Footer>
   </Container>
 );
