@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { FlatList } from 'react-native';
-import ButtonForm from '../../components/Forms/Input/ButtonForm';
+import ButtonForm from '../../components/Forms/ButtonForm';
 import { categories } from '../../utils/categories';
 import {
   Container,

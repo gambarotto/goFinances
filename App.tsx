@@ -1,6 +1,9 @@
-import 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import 'intl';
+import 'intl/locale-data/jsonp/pt-BR';
 
 import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import { ThemeProvider } from 'styled-components';
 import {
   useFonts,
@@ -10,8 +13,8 @@ import {
 } from '@expo-google-fonts/poppins';
 import AppLoading from 'expo-app-loading';
 
-import Register from './src/screens/Register';
 import theme from './src/global/styles/theme';
+import AppRoutes from './src/routes/app.routes';
 
 const App: React.FC = () => {
   const [fontsLoaded] = useFonts({
@@ -24,7 +27,11 @@ const App: React.FC = () => {
   }
   return (
     <ThemeProvider theme={theme}>
-      <Register />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer>
+          <AppRoutes />
+        </NavigationContainer>
+      </GestureHandlerRootView>
     </ThemeProvider>
   );
 };
