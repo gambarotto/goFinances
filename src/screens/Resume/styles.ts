@@ -8,6 +8,14 @@ export const Container = styled.View`
 
   background-color: ${({ theme }) => theme.colors.background};
 `;
+export const LoadContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+export const LoadingIndicator = styled.ActivityIndicator`
+  color: ${({ theme }) => theme.colors.primary};
+`;
 export const Content = styled.ScrollView``;
 export const ChartContainer = styled.View`
   width: 100%;

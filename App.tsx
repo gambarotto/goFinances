@@ -13,6 +13,7 @@ import {
 } from '@expo-google-fonts/poppins';
 import AppLoading from 'expo-app-loading';
 
+import { StatusBar } from 'react-native';
 import theme from './src/global/styles/theme';
 import AppRoutes from './src/routes/app.routes';
 
@@ -27,6 +28,11 @@ const App: React.FC = () => {
   }
   return (
     <ThemeProvider theme={theme}>
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor={theme.colors.primary}
+      />
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
           <AppRoutes />

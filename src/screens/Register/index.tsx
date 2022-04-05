@@ -24,10 +24,11 @@ interface FormProps {
 }
 
 const schema = Yup.object().shape({
-  name: Yup.string().required('Digite um nome'),
+  name: Yup.string().required('O nome é obrigatório'),
   amount: Yup.number()
     .typeError('Digite um tipo válido')
-    .positive('O valor deve ser positivo'),
+    .positive('O valor deve ser positivo')
+    .required('O valor é obrigatório'),
 });
 
 const Register: React.FC = () => {

@@ -1,5 +1,5 @@
 /* eslint-disable prefer-spread */
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -139,9 +139,6 @@ const Dashboard: React.FC = () => {
     setIsLoading(false);
   }, []);
 
-  useEffect(() => {
-    loadTransaction();
-  }, [loadTransaction]);
   useFocusEffect(
     useCallback(() => {
       loadTransaction();
