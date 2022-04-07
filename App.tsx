@@ -3,7 +3,6 @@ import 'intl';
 import 'intl/locale-data/jsonp/pt-BR';
 
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { ThemeProvider } from 'styled-components';
 import {
   useFonts,
@@ -15,9 +14,8 @@ import AppLoading from 'expo-app-loading';
 
 import { StatusBar } from 'react-native';
 import theme from './src/global/styles/theme';
-// import AppRoutes from './src/routes/app.routes';
-import SignIn from './src/screens/SignIn';
 import { AuthProvider } from './src/hooks/auth';
+import Routes from './src/routes';
 
 const App: React.FC = () => {
   const [fontsLoaded] = useFonts({
@@ -36,12 +34,9 @@ const App: React.FC = () => {
         backgroundColor={theme.colors.primary}
       />
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer>
-          {/* <AppRoutes /> */}
-          <AuthProvider>
-            <SignIn />
-          </AuthProvider>
-        </NavigationContainer>
+        <AuthProvider>
+          <Routes />
+        </AuthProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
   );

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import {
   Container,
   Header,
@@ -18,7 +18,7 @@ import SignInSocialButton from '../../components/SignInSocialButton';
 import { useAuth } from '../../hooks/auth';
 
 const SignIn: React.FC = () => {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, signInWithApple } = useAuth();
 
   const handleSignInWithGoogle = useCallback(async () => {
     try {
@@ -26,9 +26,20 @@ const SignIn: React.FC = () => {
     } catch (error) {
       console.log(error);
 
-      Alert.alert('Erro ao tentar fazer login');
+      Alert.alert('Não foi possível conectar com a conta Google');
     }
   }, [signInWithGoogle]);
+
+  const handleSignInWithApple = useCallback(async () => {
+    try {
+      await signInWithApple();
+    } catch (error) {
+      console.log(error);
+
+      Alert.alert('Não foi possível conectar com a conta Apple');
+    }
+  }, [signInWithApple]);
+
   return (
     <Container>
       <Header>
@@ -49,7 +60,13 @@ const SignIn: React.FC = () => {
             title="Entrar com Google"
             svg={GoogleSvg}
           />
-          <SignInSocialButton title="Entrar com Apple" svg={AppleSvg} />
+          {Platform.OS === 'ios' && (
+            <SignInSocialButton
+              onPress={handleSignInWithApple}
+              title="Entrar com Apple"
+              svg={AppleSvg}
+            />
+          )}
         </FooterWapper>
       </Footer>
     </Container>
