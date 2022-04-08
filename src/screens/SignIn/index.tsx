@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Alert, Platform } from 'react-native';
+import { useTheme } from 'styled-components';
 import {
   Container,
   Header,
@@ -9,6 +10,7 @@ import {
   SignInTitle,
   Footer,
   FooterWapper,
+  LoadingIndicator,
 } from './styles';
 
 import LogoSvg from '../../assets/logo.svg';
@@ -19,24 +21,29 @@ import { useAuth } from '../../hooks/auth';
 
 const SignIn: React.FC = () => {
   const { signInWithGoogle, signInWithApple } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const theme = useTheme();
 
   const handleSignInWithGoogle = useCallback(async () => {
     try {
+      setIsLoading(true);
       await signInWithGoogle();
     } catch (error) {
       console.log(error);
-
       Alert.alert('Não foi possível conectar com a conta Google');
+      setIsLoading(false);
     }
   }, [signInWithGoogle]);
 
   const handleSignInWithApple = useCallback(async () => {
     try {
+      setIsLoading(true);
       await signInWithApple();
     } catch (error) {
       console.log(error);
 
       Alert.alert('Não foi possível conectar com a conta Apple');
+      setIsLoading(false);
     }
   }, [signInWithApple]);
 
@@ -56,18 +63,23 @@ const SignIn: React.FC = () => {
       <Footer>
         <FooterWapper>
           <SignInSocialButton
+            enabled={!isLoading}
             onPress={handleSignInWithGoogle}
             title="Entrar com Google"
             svg={GoogleSvg}
           />
           {Platform.OS === 'ios' && (
             <SignInSocialButton
+              enabled={!isLoading}
               onPress={handleSignInWithApple}
               title="Entrar com Apple"
               svg={AppleSvg}
             />
           )}
         </FooterWapper>
+        {isLoading && (
+          <LoadingIndicator color={theme.colors.shape} size="small" />
+        )}
       </Footer>
     </Container>
   );

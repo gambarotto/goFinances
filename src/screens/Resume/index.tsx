@@ -26,6 +26,7 @@ import {
   ChartContainer,
 } from './styles';
 import { categories } from '../../utils/categories';
+import { useAuth } from '../../hooks/auth';
 
 interface CategoryData {
   key: string;
@@ -38,6 +39,7 @@ interface CategoryData {
 
 const Resume: React.FC = () => {
   const theme = useTheme();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>(
@@ -59,7 +61,7 @@ const Resume: React.FC = () => {
     [selectedDate],
   );
   const loadData = useCallback(async (): Promise<void> => {
-    const dataKey = '@gofinances:transactions';
+    const dataKey = `@gofinances:transactions_user:${user.id}`;
     const response = await AsyncStorage.getItem(dataKey);
     const responseFormatted = response ? JSON.parse(response) : [];
 
@@ -104,7 +106,7 @@ const Resume: React.FC = () => {
     });
     setTotalByCategories(totalByCategory);
     setIsLoading(false);
-  }, [selectedDate]);
+  }, [selectedDate, user.id]);
 
   useFocusEffect(
     useCallback(() => {

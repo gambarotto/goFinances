@@ -14,7 +14,7 @@ import AppLoading from 'expo-app-loading';
 
 import { StatusBar } from 'react-native';
 import theme from './src/global/styles/theme';
-import { AuthProvider } from './src/hooks/auth';
+import { AuthProvider, useAuth } from './src/hooks/auth';
 import Routes from './src/routes';
 
 const App: React.FC = () => {
@@ -23,7 +23,9 @@ const App: React.FC = () => {
     Poppins_500Medium,
     Poppins_700Bold,
   });
-  if (!fontsLoaded) {
+  const { userStorageLoading } = useAuth();
+
+  if (!fontsLoaded || userStorageLoading) {
     return <AppLoading />;
   }
   return (

@@ -24,8 +24,10 @@ interface User {
 }
 interface IAuthContextData {
   user: User;
+  userStorageLoading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithApple: () => Promise<void>;
+  signOut: () => Promise<void>;
 }
 interface AuthorizationResponse {
   params: {
@@ -38,6 +40,8 @@ const AuthContext = createContext({} as IAuthContextData);
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState({} as User);
+  const [userStorageLoading, setUserStorageLoading] = useState(true);
+
   const userStorageKey = '@gofinances:user';
   useEffect(() => {
     async function loadUserStorageDate(): Promise<void> {
@@ -46,6 +50,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const userLogged = JSON.parse(data) as User;
         setUser(userLogged);
       }
+      setUserStorageLoading(false);
     }
     loadUserStorageDate();
   }, []);
@@ -91,11 +96,13 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (credentials) {
+        const name = credentials.fullName!.givenName!;
+        const photo = `https://ui-avatars.com/api/?name=${name}&length=1`;
         const userLogged = {
           id: String(credentials.user),
-          name: credentials.fullName!.givenName!,
+          name,
           email: credentials.email!,
-          photo: undefined,
+          photo,
         };
         setUser(userLogged);
         await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged));
@@ -105,8 +112,21 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
+  const signOut = useCallback(async () => {
+    setUser({} as User);
+    await AsyncStorage.removeItem(userStorageKey);
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, signInWithGoogle, signInWithApple }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        userStorageLoading,
+        signInWithGoogle,
+        signInWithApple,
+        signOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

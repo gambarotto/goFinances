@@ -27,6 +27,7 @@ import {
   LoadContainer,
   LoadingIndicator,
 } from './styles';
+import { useAuth } from '../../hooks/auth';
 
 export interface DataListProps extends TransactionPropsData {
   id: string;
@@ -42,6 +43,7 @@ interface HighlightData {
 }
 
 const Dashboard: React.FC = () => {
+  const { user, signOut } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [transactions, setTransactions] = useState<DataListProps[]>([]);
   const [highlightData, setHighlightData] = useState<HighlightData>(
@@ -52,13 +54,19 @@ const Dashboard: React.FC = () => {
   const getLastTransaction = (
     collection: DataListProps[],
     type: 'positive' | 'negative',
-  ): string => {
+  ): string | number => {
+    const collectionFilttered = collection.filter(
+      (transaction) => transaction.type === type,
+    );
+    if (collectionFilttered.length === 0) {
+      return 0;
+    }
     const lastTransaction = new Date(
       Math.max.apply(
         Math,
-        collection
-          .filter((transaction) => transaction.type === type)
-          .map((transaction) => new Date(transaction.date).getTime()),
+        collectionFilttered.map((transaction) =>
+          new Date(transaction.date).getTime(),
+        ),
       ),
     );
     return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleString(
@@ -67,7 +75,7 @@ const Dashboard: React.FC = () => {
     )}`;
   };
   const loadTransaction = useCallback(async (): Promise<void> => {
-    const dataKey = '@gofinances:transactions';
+    const dataKey = `@gofinances:transactions_user:${user.id}`;
     const dataAsync = await AsyncStorage.getItem(dataKey);
 
     const newData = dataAsync ? JSON.parse(dataAsync!) : [];
@@ -107,11 +115,14 @@ const Dashboard: React.FC = () => {
 
     const lastTransactionEntries = getLastTransaction(newData, 'positive');
     const lastTransactionExpensives = getLastTransaction(newData, 'negative');
-    const totalInterval = `01 à ${
-      lastTransactionEntries >= lastTransactionExpensives
-        ? lastTransactionEntries
-        : lastTransactionExpensives
-    }`;
+    const totalInterval =
+      lastTransactionEntries === 0 && lastTransactionExpensives === 0
+        ? 'Sem transações'
+        : `01 à ${
+            lastTransactionEntries >= lastTransactionExpensives
+              ? lastTransactionEntries
+              : lastTransactionExpensives
+          }`;
 
     setHighlightData({
       entries: {
@@ -119,14 +130,20 @@ const Dashboard: React.FC = () => {
           style: 'currency',
           currency: 'BRL',
         }),
-        lastTransiction: `Última transação dia ${lastTransactionEntries}`,
+        lastTransiction:
+          lastTransactionEntries === 0
+            ? 'Não hà transações'
+            : `Última entrada dia ${lastTransactionEntries}`,
       },
       expensives: {
         amount: expensiveTotal.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL',
         }),
-        lastTransiction: `Última transação dia ${lastTransactionExpensives}`,
+        lastTransiction:
+          lastTransactionExpensives === 0
+            ? 'Não hà transações'
+            : `Última saida dia ${lastTransactionExpensives}`,
       },
       total: {
         amount: total.toLocaleString('pt-BR', {
@@ -137,7 +154,7 @@ const Dashboard: React.FC = () => {
       },
     });
     setIsLoading(false);
-  }, []);
+  }, [user.id]);
 
   useFocusEffect(
     useCallback(() => {
@@ -159,10 +176,10 @@ const Dashboard: React.FC = () => {
                 <Photo source={{ uri: 'https://github.com/gambarotto.png' }} />
                 <User>
                   <UserGreeting>Olá,</UserGreeting>
-                  <UserName>Diego</UserName>
+                  <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
-              <LogoutButton onPress={() => {}}>
+              <LogoutButton onPress={signOut}>
                 <Icon name="power" />
               </LogoutButton>
             </UserWrapper>

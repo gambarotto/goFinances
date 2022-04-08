@@ -18,6 +18,7 @@ import TransactionTypeButton from '../../components/Forms/TransactionTypeButton'
 import CategorySelect from '../CategorySelect';
 import { Container, Form, Fields, TransactionsTypes } from './styles';
 import HeaderScreen from '../../components/HeaderScreen';
+import { useAuth } from '../../hooks/auth';
 
 interface FormProps {
   [name: string]: string;
@@ -33,6 +34,7 @@ const schema = Yup.object().shape({
 
 const Register: React.FC = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const { user } = useAuth();
   const [transactionType, setTransactionType] = useState('');
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [category, setCategory] = useState({
@@ -83,7 +85,7 @@ const Register: React.FC = () => {
       };
 
       try {
-        const dataKey = '@gofinances:transactions';
+        const dataKey = `@gofinances:transactions_user:${user.id}`;
         const dataAsync = await AsyncStorage.getItem(dataKey);
         const currentData = dataAsync ? JSON.parse(dataAsync) : [];
         currentData.push(data);
@@ -102,7 +104,7 @@ const Register: React.FC = () => {
         Alert.alert('Não foi possível salvar');
       }
     },
-    [category.key, navigation, reset, transactionType],
+    [category.key, navigation, reset, transactionType, user.id],
   );
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

@@ -47,3 +47,6 @@ export const FooterWapper = styled.View`
 
   justify-content: space-between;
 `;
+export const LoadingIndicator = styled.ActivityIndicator`
+  margin-top: 18px;
+`;
