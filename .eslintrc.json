@@ -19,9 +19,10 @@
   },
   "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
   "rules": {
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+    "prettier/prettier": ["error", { "endOfLine": "auto" }],
     "react/require-default-props": 0,
     "react/default-props-match-prop-types": 0,
-    "prettier/prettier": "error",
     "react/jsx-one-expression-per-line": "off",
     "no-use-before-define": "off",
     "react/jsx-props-no-spreading": "off",
